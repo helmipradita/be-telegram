@@ -24,7 +24,7 @@ const list = (sender, receiver) => {
       `SELECT chats.id, chats.message, 
           userSender.username AS sender, 
           userReceiver.username AS receiver,
-          to_char( chats.created_at, 'HH:MI DD/Mon/YYYY' ) AS created_at,
+          to_char( chats.created_at, 'HH:MI DD/Mon/YYYY' ) AS created_at
         FROM chats as chats
         LEFT JOIN users AS userSender ON chats.sender_id=userSender.id
         LEFT JOIN users AS userReceiver ON chats.receiver_id=userReceiver.id
