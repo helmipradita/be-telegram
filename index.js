@@ -1,41 +1,37 @@
 const express = require('express');
 const cors = require(`cors`);
 const cookieParser = require('cookie-parser');
-const morgan = require(`morgan`);
 const bodyParser = require(`body-parser`);
 require(`dotenv`).config();
+const socket = require('socket.io');
+const http = require('http');
+
 const mainRouter = require('./src/routes/index');
+const socketController = require('./src/sockets/index');
 
 const app = express();
 const port = process.env.PORT;
 
+app.use(express.static('public'));
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-const corsOptions = {
-  origin: 'http://localhost:3000',
-  credentials: true, //access-control-allow-credentials:true
-  optionSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
-
+app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(morgan('dev'));
 
 app.use('/', mainRouter);
 
-app.all('*', (req, res, next) => {
-  res.status(404).json({
-    status: 'error',
-    statusCode: 404,
-    message: 'this is root, check again the endpoint API',
-  });
+const server = http.createServer(app);
+const io = socket(server, {
+  cors: {
+    origin: '*',
+  },
 });
 
-app.use('/', (req, res, next) => {
-  res.status(200).json({ status: 'success', statusCode: 200 });
+io.on('connection', (socket) => {
+  console.log('new user connect');
+  socketController(io, socket);
 });
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`🚀 Example app listening on port ${port}`);
 });

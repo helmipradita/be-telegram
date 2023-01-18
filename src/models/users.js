@@ -1,11 +1,11 @@
 const Pool = require('../config/db');
 
 const register = (data) => {
-  const { id, name, email, password } = data;
+  const { id, username, email, password } = data;
   return new Promise((resolve, reject) =>
     Pool.query(
-      `INSERT INTO users (id, name, email, password) 
-      VALUES('${id}', '${name}', '${email}', '${password}')`,
+      `INSERT INTO users (id, username, email, password) 
+      VALUES('${id}', '${username}', '${email}', '${password}')`,
       (err, result) => {
         if (!err) {
           resolve(result);
@@ -57,11 +57,11 @@ const verif = (email) => {
 };
 
 const updateUsers = (data) => {
-  const { id, name, email, photo } = data;
+  const { id, username, email, photo } = data;
   return new Promise((resolve, reject) =>
     Pool.query(
       `UPDATE users 
-      SET id='${id}', name='${name}', email='${email}', photo='${photo}'  
+      SET id='${id}', username='${username}', email='${email}', photo='${photo}'  
       WHERE id='${id}'`,
       (err, result) => {
         if (!err) {
@@ -74,10 +74,23 @@ const updateUsers = (data) => {
   );
 };
 
+const getAll = () => {
+  return new Promise((resolve, reject) =>
+    Pool.query(`SELECT * FROM users`, (err, result) => {
+      if (!err) {
+        resolve(result);
+      } else {
+        reject(err);
+      }
+    })
+  );
+};
+
 module.exports = {
   register,
   findEmail,
   findIdUsers,
   verif,
   updateUsers,
+  getAll,
 };

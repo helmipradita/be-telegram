@@ -5,6 +5,7 @@ const {
   findIdUsers,
   verif,
   updateUsers,
+  getAll,
 } = require(`../models/users`);
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
@@ -37,7 +38,7 @@ const usersControllers = {
     let password = bcrypt.hashSync(req.body.password);
     let data = {
       id: uuidv4(),
-      name: req.body.name,
+      username: req.body.username,
       email: req.body.email,
       password,
     };
@@ -45,7 +46,7 @@ const usersControllers = {
       const result = await register(data);
       if (result) {
         let verifUrl = `http://${Host}:${Port}/users/${req.body.email}/${otp}`;
-        let sendEmail = email(data.email, otp, verifUrl, data.name);
+        let sendEmail = email(data.email, otp, verifUrl, data.username);
         if (sendEmail == 'email not sent!') {
           return response(res, 404, false, null, 'register fail');
         }
@@ -61,27 +62,6 @@ const usersControllers = {
       console.log(err);
       response(res, 404, false, err, ' register fail');
     }
-  },
-  verif: async (req, res) => {
-    const { email, otp } = req.body;
-    const {
-      rows: [user],
-    } = await findEmail(email);
-    if (!user) {
-      return response(res, 404, false, null, 'email not found');
-    }
-
-    if (user.otp == otp) {
-      await verif(email);
-      return response(
-        res,
-        200,
-        true,
-        req.body.email,
-        'verification account success'
-      );
-    }
-    return response(res, 404, false, null, 'wrong otp please check your email');
   },
   login: async (req, res, next) => {
     let {
@@ -103,12 +83,10 @@ const usersControllers = {
     }
 
     delete users.password;
-    delete users.verif;
-    delete users.otp;
     let payload = {
       id: users.id,
+      username: users.username,
       email: users.email,
-      role: users.role,
     };
     let accessToken = generateToken(payload);
     let refToken = refreshToken(payload);
@@ -127,8 +105,6 @@ const usersControllers = {
       } = await findIdUsers(id);
 
       delete users.password;
-      delete users.verif;
-      delete users.otp;
       response(res, 200, true, users, 'get data users success');
     } catch (error) {
       console.log(error);
@@ -137,7 +113,7 @@ const usersControllers = {
   },
   update: async (req, res, next) => {
     try {
-      const { name, email } = req.body;
+      const { username, email } = req.body;
       const { id } = req.payload;
 
       const {
@@ -146,7 +122,7 @@ const usersControllers = {
 
       const dataUsers = {
         id,
-        name,
+        username,
         email,
       };
 
@@ -165,6 +141,18 @@ const usersControllers = {
     } catch (error) {
       console.log(error);
       response(res, 404, false, 'update data users failed');
+    }
+  },
+  getAll: async (req, res) => {
+    try {
+      const result = await getAll();
+
+      if (result) {
+        response(res, 200, true, result.rows, 'get all users success');
+      }
+    } catch (err) {
+      console.log(err);
+      response(res, 404, false, err, ' get all users failed');
     }
   },
 };

@@ -8,10 +8,10 @@ let uploaded = multer();
 
 //auth
 router.post(`/register`, uploaded.array(), usersControllers.register);
-router.post('/verification', uploaded.array(), usersControllers.verif);
 router.post('/login', uploaded.array(), usersControllers.login);
 
 //profile
+router.get('/all', usersControllers.getAll);
 router.get('/profile', protect, usersControllers.profile);
 router.put(
   '/profile',
