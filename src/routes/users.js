@@ -12,6 +12,7 @@ router.post('/login', uploaded.array(), usersControllers.login);
 
 //profile
 router.get('/all', usersControllers.getAll);
+router.get('/all/:id', protect, usersControllers.getAllById);
 router.get('/profile', protect, usersControllers.profile);
 router.put(
   '/profile',

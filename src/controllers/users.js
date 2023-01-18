@@ -3,9 +3,9 @@ const {
   register,
   findEmail,
   findIdUsers,
-  verif,
   updateUsers,
   getAll,
+  getAllById,
 } = require(`../models/users`);
 const bcrypt = require('bcryptjs');
 const { v4: uuidv4 } = require('uuid');
@@ -146,6 +146,20 @@ const usersControllers = {
   getAll: async (req, res) => {
     try {
       const result = await getAll();
+
+      if (result) {
+        response(res, 200, true, result.rows, 'get all users success');
+      }
+    } catch (err) {
+      console.log(err);
+      response(res, 404, false, err, ' get all users failed');
+    }
+  },
+  getAllById: async (req, res) => {
+    try {
+      const { id } = req.payload;
+
+      const result = await getAllById(id);
 
       if (result) {
         response(res, 200, true, result.rows, 'get all users success');

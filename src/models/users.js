@@ -41,21 +41,6 @@ const findIdUsers = (id) => {
   );
 };
 
-const verif = (email) => {
-  return new Promise((resolve, reject) =>
-    Pool.query(
-      `UPDATE users SET verif=1 WHERE email='${email}'`,
-      (err, result) => {
-        if (!err) {
-          resolve(result);
-        } else {
-          reject(err);
-        }
-      }
-    )
-  );
-};
-
 const updateUsers = (data) => {
   const { id, username, email, photo } = data;
   return new Promise((resolve, reject) =>
@@ -86,11 +71,27 @@ const getAll = () => {
   );
 };
 
+const getAllById = (id) => {
+  return new Promise((resolve, reject) =>
+    Pool.query(
+      `SELECT * FROM users 
+      WHERE id NOT IN ('${id}')`,
+      (err, result) => {
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(err);
+        }
+      }
+    )
+  );
+};
+
 module.exports = {
   register,
   findEmail,
   findIdUsers,
-  verif,
   updateUsers,
   getAll,
+  getAllById,
 };
