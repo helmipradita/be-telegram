@@ -654,3 +654,12 @@ Response 200
 
 </details>
 
+## Related Project
+* [`Backend Project Telegram `](https://github.com/helmipradita/be-telegram)
+* [`REST API Telegram`](https://api-telegram.helmipradita.dev)
+
+## Contact
+
+Contributors names and contact info Fullstack Developers
+
+* Helmi Pradita [@helmipradita](https://github.com/helmipradita)
