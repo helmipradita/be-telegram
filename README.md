@@ -1,4 +1,4 @@
-# Food Recipe - Backend
+# Telegram App - Backend
 
 ## Table of Contents
 
